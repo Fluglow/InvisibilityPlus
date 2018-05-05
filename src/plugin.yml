@@ -1,0 +1,10 @@
+main: me.fluglow.InvisibleArmor
+name: InvisibleArmor
+version: 1.0
+author: Fluglow
+description: Hides invisible players' armor.
+depend: [ProtocolLib]
+permissions:
+  invisiblearmor.invisible:
+    description: Allows the player's armor to turn invisible when the player is invisible.
+    default: op
