@@ -53,6 +53,7 @@ public class InvisibilityEffectListener implements Listener {
 			for(Player onlinePlayer : player.getWorld().getPlayers())
 			{
 				if(onlinePlayer.getUniqueId().equals(player.getUniqueId())) continue;
+
 				try {
 					ProtocolLibrary.getProtocolManager().sendServerPacket(onlinePlayer, packetContainer);
 				} catch (InvocationTargetException e) {
@@ -125,11 +126,6 @@ public class InvisibilityEffectListener implements Listener {
 		armorResetTasks.put(playerUUID, task);
 	}
 
-	private void fakeRemoveArmor(List<Player> players, int potionDurationSec)
-	{
-		players.forEach(player -> fakeRemoveArmor(player, potionDurationSec));
-	}
-
 	@EventHandler
 	public void playerJoinInvisibility(PlayerJoinEvent event)
 	{
@@ -187,10 +183,8 @@ public class InvisibilityEffectListener implements Listener {
 			public void run() {
 				for(Player p : affected)
 				{
-					if(p.hasPotionEffect(PotionEffectType.INVISIBILITY))
-					{
-						fakeRemoveArmor(p, p.getPotionEffect(PotionEffectType.INVISIBILITY).getDuration());
-					}
+					if(!p.hasPotionEffect(PotionEffectType.INVISIBILITY)) continue;
+					fakeRemoveArmor(p, p.getPotionEffect(PotionEffectType.INVISIBILITY).getDuration());
 				}
 			}
 		}.runTaskLater(mainPlugin, 1L);

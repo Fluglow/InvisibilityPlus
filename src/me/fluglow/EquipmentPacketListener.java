@@ -31,10 +31,8 @@ public class EquipmentPacketListener extends PacketAdapter {
 				if(onlinePlayer.getEntityId() == entityId && onlinePlayer.hasPermission("invisiblearmor.invisible") && onlinePlayer.hasPotionEffect(PotionEffectType.INVISIBILITY))
 				{
 					EnumWrappers.ItemSlot slot = packet.getItemSlots().getValues().get(0);
-					if(hideSettings.shouldHide(slot))
-					{
-						packet.getItemModifier().write(0, null);
-					}
+					if(!hideSettings.shouldHide(slot)) continue;
+					packet.getItemModifier().write(0, null);
 				}
 			}
 		}
