@@ -92,7 +92,7 @@ public class InvisibilityEffectListener implements Listener {
 		return item == null || item.getType() == Material.AIR ? null : item;
 	}
 
-	private void fakeRemoveArmor(Player player, long potionDurationTicks) //Sends other players empty equipment packets of the specified player
+	void fakeRemoveArmor(Player player, long potionDurationTicks) //Sends other players empty equipment packets of the specified player
 	{
 		UUID playerUUID = player.getUniqueId();
 		for(EnumWrappers.ItemSlot slot : EnumWrappers.ItemSlot.values())

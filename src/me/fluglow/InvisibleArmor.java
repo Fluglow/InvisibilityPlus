@@ -3,7 +3,9 @@ package me.fluglow;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.ListenerPriority;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.potion.PotionEffectType;
 
 public class InvisibleArmor extends JavaPlugin {
 
@@ -14,7 +16,16 @@ public class InvisibleArmor extends JavaPlugin {
 		HideSettings userSettings = loadSettings();
 		ProtocolLibrary.getProtocolManager().addPacketListener(new EquipmentPacketListener(this, ListenerPriority.NORMAL, userSettings, PacketType.Play.Server.ENTITY_EQUIPMENT)); //Create and register our equipment packet listener
 
-		getServer().getPluginManager().registerEvents(new InvisibilityEffectListener(this, userSettings), this); //Register potion effect listener
+		InvisibilityEffectListener effectListener = new InvisibilityEffectListener(this, userSettings);
+		getServer().getPluginManager().registerEvents(effectListener, this); //Register potion effect listener
+
+		//Hide armor of any invisible online players.
+		for(Player p : getServer().getOnlinePlayers())
+		{
+			if(!p.hasPotionEffect(PotionEffectType.INVISIBILITY)) continue;
+			int duration = p.getPotionEffect(PotionEffectType.INVISIBILITY).getDuration();
+			effectListener.fakeRemoveArmor(p, duration);
+		}
 	}
 
 	private HideSettings loadSettings()
