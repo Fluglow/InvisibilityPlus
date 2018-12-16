@@ -3,46 +3,58 @@ package me.fluglow;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 
 public class HideSettings {
-	private final boolean hideHelmet;
-	private final boolean hideChestplate;
-	private final boolean hideLeggings;
-	private final boolean hideBoots;
-	private final boolean hideMainhand;
-	private final boolean hideOffhand;
 
-	HideSettings(boolean hideHelmet, boolean hideChestplate, boolean hideLeggings, boolean hideBoots, boolean hideMainhand, boolean hideOffhand)
+	private final boolean[] settings;
+	HideSettings(boolean... settings)
 	{
-		this.hideHelmet = hideHelmet;
-		this.hideChestplate = hideChestplate;
-		this.hideLeggings = hideLeggings;
-		this.hideBoots = hideBoots;
-		this.hideMainhand = hideMainhand;
-		this.hideOffhand = hideOffhand;
+		this.settings = settings;
 	}
 
-	boolean shouldHide(EnumWrappers.ItemSlot slot)
+	@SuppressWarnings("BooleanMethodIsAlwaysInverted")
+	public boolean shouldHideSlot(EnumWrappers.ItemSlot slot)
 	{
-		boolean shouldHide = false;
 		switch(slot) {
 			case MAINHAND:
-				shouldHide = hideMainhand;
-				break;
+				return shouldHide(HideSetting.ITEM_IN_MAIN_HAND);
 			case OFFHAND:
-				shouldHide = hideOffhand;
-				break;
+				return shouldHide(HideSetting.ITEM_IN_OFF_HAND);
 			case FEET:
-				shouldHide = hideBoots;
-				break;
+				return shouldHide(HideSetting.BOOTS);
 			case LEGS:
-				shouldHide = hideLeggings;
-				break;
+				return shouldHide(HideSetting.LEGGINGS);
 			case CHEST:
-				shouldHide = hideChestplate;
-				break;
+				return shouldHide(HideSetting.CHESTPLATE);
 			case HEAD:
-				shouldHide = hideHelmet;
-				break;
+				return shouldHide(HideSetting.HELMET);
+			default:
+				return false;
 		}
-		return shouldHide;
+	}
+
+	public boolean shouldHide(HideSetting setting)
+	{
+		return settings[setting.index];
+	}
+
+
+	public enum HideSetting { //Names are used in config, should be user-friendly.
+		HELMET(0, true),
+		CHESTPLATE(1, true),
+		LEGGINGS(2, true),
+		BOOTS(3, true),
+		ITEM_IN_MAIN_HAND(4, false),
+		ITEM_IN_OFF_HAND(5, false),
+		BODY_ARROWS(6, false),
+		SHOT_ARROWS(7, false),
+		POTION_PARTICLES(8, false);
+
+		private final int index;
+		final boolean defValue;
+		HideSetting(int index, boolean defaultValue)
+		{
+			this.index = index;
+			this.defValue = defaultValue;
+		}
+
 	}
 }
