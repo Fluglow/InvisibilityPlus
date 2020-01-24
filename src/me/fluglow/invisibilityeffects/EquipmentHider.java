@@ -18,7 +18,7 @@ import org.bukkit.plugin.Plugin;
 import java.lang.reflect.InvocationTargetException;
 import java.util.UUID;
 
-public class EquipmentHider extends InvisibilityPacketAdapter implements Listener {
+public class EquipmentHider extends InvisibilityPacketAdapter {
 
 	private final HideSettings hideSettings;
 

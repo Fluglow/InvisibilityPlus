@@ -105,24 +105,27 @@ public class InvisibilityEffectListener implements Listener {
 		if(invisibilityEffect == null) return;
 
 		List<Player> affected = new ArrayList<>();
+		Map<UUID, Double> playerDurations = new HashMap<>();
 		for(Entity entity : event.getAffectedEntities())
 		{
-			if(entity instanceof Player)
+			if(!(entity instanceof Player)) continue;
+
+			Player player = (Player)entity;
+			if(!InvisibilityPlus.hasPluginPermission(player)) continue;
+			playerDurations.put(player.getUniqueId(), event.getIntensity(player) * invisibilityEffect.getDuration());
+
+			PotionEffect currEffect = player.getPotionEffect(PotionEffectType.INVISIBILITY);
+			if(currEffect != null)
 			{
-				Player player = (Player)entity;
-				if(!InvisibilityPlus.hasPluginPermission(player)) return;
-				PotionEffect currEffect = player.getPotionEffect(PotionEffectType.INVISIBILITY);
-				if(currEffect != null)
-				{
-					long splashEffectTime = Math.round(invisibilityEffect.getDuration() * event.getIntensity(player));
-					if(splashEffectTime < currEffect.getDuration()) continue; //Skip players with a longer duration invisibility effect since it doesn't get overridden.
-				}
-				affected.add(player);
+				long splashEffectTime = Math.round(playerDurations.get(player.getUniqueId()));
+				if(splashEffectTime < currEffect.getDuration()) continue; //Skip players with a longer duration invisibility effect since it doesn't get overridden.
 			}
+			affected.add(player);
+
 		}
-		for(Player p : affected)
+		for(Player player : affected)
 		{
-			hidePlayer(p.getUniqueId(), Math.round(invisibilityEffect.getDuration() * event.getIntensity(p)));
+			hidePlayer(player.getUniqueId(), Math.round(playerDurations.get(player.getUniqueId())));
 		}
 	}
 }

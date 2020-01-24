@@ -26,6 +26,7 @@ public class BodyArrowHider extends InvisibilityPacketAdapter implements Listene
 
 	public BodyArrowHider(Plugin plugin) {
 		super(plugin, PacketType.Play.Server.ENTITY_METADATA);
+		Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
 	}
 
 	@Override
@@ -50,6 +51,7 @@ public class BodyArrowHider extends InvisibilityPacketAdapter implements Listene
 		int current = getPlayerCurrentArrows(player);
 		if(current == 0) return;
 		setPlayerFakeArrowCount(uuid, current);
+		playerArrowAmounts.remove(uuid);
 	}
 
 	private int getPlayerCurrentArrows(Player player)
@@ -78,10 +80,10 @@ public class BodyArrowHider extends InvisibilityPacketAdapter implements Listene
 		for(WrappedWatchableObject watcher : watchers)
 		{
 			if(watcher.getIndex() != DW_ARROW_INDEX) continue;
-			playerArrowAmounts.put(dataOwner.getUniqueId(), (int)watcher.getValue());
+			playerArrowAmounts.put(dataOwner.getUniqueId(), (int)watcher.getValue()); //Track the amount of arrows sent
 
 			if(!InvisibilityPlus.isInvisible(dataOwner)) return;
-			watcher.setValue(0, true);
+			watcher.setValue(0, true); //Clear the value if player is invisible
 		}
 	}
 
@@ -94,7 +96,7 @@ public class BodyArrowHider extends InvisibilityPacketAdapter implements Listene
 
 		WrappedDataWatcher watcher = new WrappedDataWatcher();
 		watcher.setEntity(player);
-		watcher.setObject(10, WrappedDataWatcher.Registry.get(Integer.class), arrowCount);
+		watcher.setObject(DW_ARROW_INDEX, WrappedDataWatcher.Registry.get(Integer.class), arrowCount);
 		packet.getWatchableCollectionModifier().write(0, watcher.getWatchableObjects());
 		for(Player wPlayer : player.getWorld().getPlayers())
 		{

@@ -7,6 +7,7 @@ import com.comphenix.protocol.events.PacketEvent;
 import com.google.common.primitives.Doubles;
 import me.fluglow.HideSettings;
 import me.fluglow.InvisibilityPlus;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -28,6 +29,7 @@ public class SpawnedObjectHider extends InvisibilityPacketAdapter implements Lis
 	public SpawnedObjectHider(Plugin plugin, HideSettings hideSettings) {
 		super(plugin, PacketType.Play.Server.SPAWN_ENTITY);
 		this.hideSettings = hideSettings;
+		Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
 	}
 
 	@Override
@@ -47,6 +49,7 @@ public class SpawnedObjectHider extends InvisibilityPacketAdapter implements Lis
 		if(!spawnedEntities.containsKey(uuid)) return;
 		for(Entity e : spawnedEntities.get(uuid))
 		{
+			if(!e.isValid()) continue; //Picked up arrows are not valid entities
 			for(Player p : e.getWorld().getPlayers())
 			{
 				if(p.getUniqueId().equals(uuid)) continue;
@@ -67,6 +70,7 @@ public class SpawnedObjectHider extends InvisibilityPacketAdapter implements Lis
 		onPlayerReveal(event.getPlayer().getUniqueId());
 	}
 
+	@SuppressWarnings("UnstableApiUsage")
 	private PacketContainer createObjectPacket(Entity e)
 	{
 		PacketContainer packet = new PacketContainer(PacketType.Play.Server.SPAWN_ENTITY);
